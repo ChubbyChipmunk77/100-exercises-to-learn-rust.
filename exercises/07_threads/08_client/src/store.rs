@@ -2,7 +2,7 @@ use crate::data::{Status, Ticket, TicketDraft};
 use std::collections::BTreeMap;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct TicketId(u64);
+pub struct TicketId(pub u64);
 
 #[derive(Clone)]
 pub struct TicketStore {
