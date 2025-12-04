@@ -18,12 +18,31 @@ impl Ticket {
     // as well as some `String` methods. Use the documentation of Rust's standard library
     // to find the most appropriate options -> https://doc.rust-lang.org/std/string/struct.String.html
     fn new(title: String, description: String, status: String) -> Self {
-        todo!();
-        Self {
-            title,
-            description,
-            status,
+        if title.is_empty() {
+            panic!("Title cannot be empty");
+        } else if title.len() > 50 {
+            panic!("Title cannot be longer than 50 bytes");
         }
+
+        if description.is_empty() {
+            panic!("Description cannot be empty");
+        } else if description.len() > 500 {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+
+        if status != "To-Do".to_string()
+            && status != "In Progress".to_string()
+            && status != "Done".to_string()
+        {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
+
+        let newstruct: Ticket = Ticket {
+            title: title,
+            description: description,
+            status: status,
+        };
+        newstruct
     }
 }
 

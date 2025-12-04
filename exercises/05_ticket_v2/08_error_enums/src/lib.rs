@@ -1,14 +1,10 @@
 // TODO: Use two variants, one for a title error and one for a description error.
 //   Each variant should contain a string with the explanation of what went wrong exactly.
 //   You'll have to update the implementation of `Ticket::new` as well.
-enum TicketNewError {}
-
-// TODO: `easy_ticket` should panic when the title is invalid, using the error message
-//   stored inside the relevant variant of the `TicketNewError` enum.
-//   When the description is invalid, instead, it should use a default description:
-//   "Description not provided".
-fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+use std::fmt;
+enum TicketNewError {
+    TitleInvalid { titleerr: &'static str },
+    DescriptionInvalid { invalidmsg: &'static str },
 }
 
 #[derive(Debug, PartialEq)]
@@ -25,30 +21,73 @@ enum Status {
     Done,
 }
 
+impl fmt::Display for TicketNewError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            TicketNewError::TitleInvalid { titleerr } => {
+                write!(f, "{}", titleerr)
+            }
+            TicketNewError::DescriptionInvalid { invalidmsg } => {
+                write!(f, "{}", invalidmsg)
+            }
+        }
+    }
+}
+
+// TODO: `easy_ticket` should panic when the title is invalid, using the error message
+//   stored inside the relevant variant of the `TicketNewError` enum.
+//   When the description is invalid, instead, it should use a default description:
+//   "Description not provided".
+fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
+    if title.is_empty() {
+        panic!(
+            "{}",
+            TicketNewError::TitleInvalid {
+                titleerr: "Title cannot be empty"
+            }
+        );
+    } else if title.len() > 50 {
+        panic!(
+            "{}",
+            TicketNewError::TitleInvalid {
+                titleerr: "Title cannot be longer than 50 bytes"
+            }
+        );
+    } else if description.is_empty() || description.len() > 500 {
+        return Ticket {
+            title: title,
+            description: "Description not provided".into(),
+            status: status,
+        };
+    } else {
+        return Ticket {
+            title: title,
+            description: description.into(),
+            status: status,
+        };
+    }
+}
+
 impl Ticket {
     pub fn new(
         title: String,
         description: String,
         status: Status,
     ) -> Result<Ticket, TicketNewError> {
-        if title.is_empty() {
-            return Err("Title cannot be empty".to_string());
-        }
-        if title.len() > 50 {
-            return Err("Title cannot be longer than 50 bytes".to_string());
-        }
-        if description.is_empty() {
-            return Err("Description cannot be empty".to_string());
-        }
-        if description.len() > 500 {
-            return Err("Description cannot be longer than 500 bytes".to_string());
-        }
-
-        Ok(Ticket {
-            title,
-            description,
-            status,
-        })
+        // if title.is_empty() {
+        //     return Err("Title cannot be empty".to_string());
+        // }
+        // if title.len() > 50 {
+        //     return Err("Title cannot be longer than 50 bytes".to_string());
+        // }
+        // if description.is_empty() {
+        //     return Err("Description cannot be empty".to_string());
+        // }
+        // if description.len() > 500 {
+        //     return Err("Description cannot be longer than 500 bytes".to_string());
+        // }
+        let my_ticket: Ticket = easy_ticket(title, description, status);
+        Ok(my_ticket)
     }
 }
 

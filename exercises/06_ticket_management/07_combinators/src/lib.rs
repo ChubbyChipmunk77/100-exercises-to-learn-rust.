@@ -7,6 +7,17 @@ pub struct TicketStore {
     tickets: Vec<Ticket>,
 }
 
+impl TicketStore {
+    fn to_dos(&self) -> Vec<&Ticket> {
+        let res = self
+            .tickets
+            .iter()
+            .filter(|e| e.status == Status::ToDo)
+            .collect::<Vec<&Ticket>>();
+        return res;
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
     pub title: TicketTitle,

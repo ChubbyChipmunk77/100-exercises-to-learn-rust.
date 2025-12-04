@@ -1,21 +1,27 @@
 // TODO: use `Status` as type for `Ticket::status`
 //   Adjust the signature and implementation of all other methods as necessary.
 
+use std::num::Saturating;
+
+#[derive(PartialEq, Debug, Clone, Copy)]
+enum Status {
+    // TODO: add the missing variants
+    ToDo,
+    InProgress,
+    Done,
+}
+
 #[derive(Debug, PartialEq)]
 // `derive`s are recursive: it can only derive `PartialEq` if all fields also implement `PartialEq`.
 // Same holds for `Debug`. Do what you must with `Status` to make this work.
 struct Ticket {
     title: String,
     description: String,
-    status: String,
-}
-
-enum Status {
-    // TODO: add the missing variants
+    status: Status,
 }
 
 impl Ticket {
-    pub fn new(title: String, description: String, status: String) -> Ticket {
+    pub fn new(title: String, description: String, status: Status) -> Ticket {
         if title.is_empty() {
             panic!("Title cannot be empty");
         }
@@ -28,8 +34,8 @@ impl Ticket {
         if description.len() > 500 {
             panic!("Description cannot be longer than 500 bytes");
         }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        if status != Status::ToDo && status != Status::InProgress && status != Status::Done {
+            panic!("Only `ToDo`, `InProgress`, and `Done` statuses are allowed");
         }
 
         Ticket {
@@ -47,7 +53,7 @@ impl Ticket {
         &self.description
     }
 
-    pub fn status(&self) -> &String {
+    pub fn status(&self) -> &Status {
         &self.status
     }
 }

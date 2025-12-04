@@ -12,6 +12,22 @@ use ticket_fields::{TicketDescription, TicketTitle};
 pub struct TicketStore {
     tickets: Vec<Ticket>,
 }
+// trait IntoIterator {
+//     type Item;
+//     type IntoIter: Iterator<Item = Self::Item>;
+//     fn into_iter(self) -> Self::IntoIter;
+// }
+
+//IntoIterator helps to make something iterable even if it doesnt impls the Iterator trait.
+//One should just be sure that which value is he iterating , and what will be the type of the
+//Iterable .
+impl IntoIterator for TicketStore {
+    type Item = Ticket;
+    type IntoIter = std::vec::IntoIter<Ticket>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.into_iter()
+    }
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ticket {
