@@ -1,13 +1,24 @@
-use std::sync::mpsc::{Receiver, Sender};
 use crate::store::TicketStore;
+use std::sync::mpsc::{Receiver, Sender};
 
 pub mod data;
 pub mod store;
 
 // Refer to the tests to understand the expected schema.
 pub enum Command {
-    Insert { todo!() },
-    Get { todo!() }
+    //so basically here insert gives 2 things the ticket draft to insert and a response sender to
+    //send back the id of the ticket created
+    //here response sender is a channer of the client.
+    Insert {
+        draft: data::TicketDraft,
+        response_sender: Sender<store::TicketId>,
+    },
+    //here it gives to things the id so that it can get the particular ticket.
+    //and the response sender so that it can receive the ticket.
+    Get {
+        id: store::TicketId,
+        response_sender: Sender<data::Ticket>,
+    },
 }
 
 pub fn launch() -> Sender<Command> {
@@ -21,19 +32,26 @@ pub fn server(receiver: Receiver<Command>) {
     let mut store = TicketStore::new();
     loop {
         match receiver.recv() {
-            Ok(Command::Insert {}) => {
-                todo!()
+            Ok(Command::Insert {
+                draft,
+                response_sender,
+            }) => {
+                let id = store.add_ticket(draft);
+                response_sender.send(id).unwrap();
             }
             Ok(Command::Get {
-                todo!()
+                id,
+                response_sender,
             }) => {
-                todo!()
+                let ticket = store.get(id).unwrap().clone();
+                response_sender.send(ticket).unwrap();
             }
+            //error happends when there are no more senders.
             Err(_) => {
                 // There are no more senders, so we can safely break
                 // and shut down the server.
-                break
-            },
+                break;
+            }
         }
     }
 }
