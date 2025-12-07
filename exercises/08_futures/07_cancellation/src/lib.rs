@@ -4,6 +4,13 @@ use std::time::Duration;
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpListener;
 
+// here the code will only write the one half of a word and not the other half. cause after
+// reading once it does not reads again , instead it waits for a new connection to be made ,
+// which only happens for the first portion of a word.
+
+//Here the cancellation of future is applied using timeout. If the read operation does not complete
+//within the specified timeout duration . The Tcpstream is dropped and the next connection is
+//accepted.
 pub async fn run(listener: TcpListener, n_messages: usize, timeout: Duration) -> Vec<u8> {
     let mut buffer = Vec::new();
     for _ in 0..n_messages {
@@ -46,6 +53,6 @@ mod tests {
 
         let buffered = handle.await.unwrap();
         let buffered = std::str::from_utf8(&buffered).unwrap();
-        assert_eq!(buffered, "");
+        assert_eq!(buffered, "hefrthta");
     }
 }
